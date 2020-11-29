@@ -10,91 +10,82 @@
 #include <array>
 #include <memory>
 
-
 #include "Triangle.hpp"
 #include "MeshVertex.hpp"
 #include "TriangleMesh.hpp"
 #include "utils.hpp"
 
+namespace shape_generator
+{
 
-namespace generator {
-
-
-/// Regular icosahedron centered at origin with given radius.
-/// @image html IcosahedronMesh.svg
-class IcosahedronMesh {
-public:
-
-	class Triangles {
+	/// Regular icosahedron centered at origin with given radius.
+	/// @image html IcosahedronMesh.svg
+	class IcosahedronMesh
+	{
 	public:
+		class Triangles
+		{
+		public:
+			bool done() const noexcept;
+			Triangle generate() const;
+			void next();
 
-		bool done() const noexcept;
-		Triangle generate() const;
-		void next();
+		private:
+			const IcosahedronMesh *mesh_;
+
+			int i_;
+
+			// Needs be a shared_ptr in order to make copy/move not to mess up the
+			// internal pointer in triangles_.
+			std::shared_ptr<const TriangleMesh> triangleMesh_;
+
+			typename TriangleGeneratorType<TriangleMesh>::Type triangles_;
+
+			Triangles(const IcosahedronMesh &mesh);
+
+			friend class IcosahedronMesh;
+		};
+
+		class Vertices
+		{
+		public:
+			bool done() const noexcept;
+			MeshVertex generate() const;
+			void next();
+
+		private:
+			const IcosahedronMesh *mesh_;
+
+			int i_;
+
+			// Needs be a shared_ptr in order to make copy/move not to mess up the
+			// internal pointer in triangles_.
+			std::shared_ptr<const TriangleMesh> triangleMesh_;
+
+			typename VertexGeneratorType<TriangleMesh>::Type vertices_;
+
+			Vertices(const IcosahedronMesh &mesh);
+
+			friend class IcosahedronMesh;
+		};
 
 	private:
+		double radius_;
 
-		const IcosahedronMesh* mesh_;
+		int segments_;
 
-		int i_;
+		int faceVertexCount_;
 
-		// Needs be a shared_ptr in order to make copy/move not to mess up the
-		// internal pointer in triangles_.
-		std::shared_ptr<const TriangleMesh> triangleMesh_;
-
-		typename TriangleGeneratorType<TriangleMesh>::Type triangles_;
-
-		Triangles(const IcosahedronMesh& mesh);
-
-	friend class IcosahedronMesh;
-	};
-
-
-	class Vertices {
 	public:
+		/// @param radius The radius of the enclosing sphere.
+		/// @param segments The number segments along each edge. Must be >= 1.
+		IcosahedronMesh(double radius = 1.0, int segments = 1);
 
-		bool done() const noexcept;
-		MeshVertex generate() const;
-		void next();
+		Triangles triangles() const noexcept;
 
-	private:
-
-		const IcosahedronMesh* mesh_;
-
-		int i_;
-
-		// Needs be a shared_ptr in order to make copy/move not to mess up the
-		// internal pointer in triangles_.
-		std::shared_ptr<const TriangleMesh> triangleMesh_;
-
-		typename VertexGeneratorType<TriangleMesh>::Type vertices_;
-
-		Vertices(const IcosahedronMesh& mesh);
-
-	friend class IcosahedronMesh;
+		Vertices vertices() const noexcept;
 	};
 
-private:
-
-	double radius_;
-
-	int segments_;
-
-	int faceVertexCount_;
-
-public:
-
-	/// @param radius The radius of the enclosing sphere.
-	/// @param segments The number segments along each edge. Must be >= 1.
-	IcosahedronMesh(double radius = 1.0, int segments = 1);
-
-	Triangles triangles() const noexcept;
-
-	Vertices vertices() const noexcept;
-
-};
-
-}
+} // namespace shape_generator
 
 #endif
-

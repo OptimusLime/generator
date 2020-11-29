@@ -17,150 +17,127 @@
 #include "PlaneMesh.hpp"
 #include "SphericalTriangleMesh.hpp"
 
-
-namespace generator {
-
-namespace detail {
-
-
-class BoxEdge
+namespace shape_generator
 {
-private:
 
-	using Impl = TranslateMesh<CylinderMesh>;
-	Impl translateMesh_;
+	namespace detail
+	{
 
-public:
+		class BoxEdge
+		{
+		private:
+			using Impl = TranslateMesh<CylinderMesh>;
+			Impl translateMesh_;
 
-	BoxEdge(
-		const gml::dvec2& position, double radius, double size,
-		int slices, int segments
-	);
+		public:
+			BoxEdge(
+				const gml::dvec2 &position, double radius, double size,
+				int slices, int segments);
 
-	using Triangles = typename Impl::Triangles;
+			using Triangles = typename Impl::Triangles;
 
-	Triangles triangles() const noexcept { return translateMesh_.triangles(); }
+			Triangles triangles() const noexcept { return translateMesh_.triangles(); }
 
-	using Vertices = typename Impl::Vertices;
+			using Vertices = typename Impl::Vertices;
 
-	Vertices vertices() const noexcept { return translateMesh_.vertices(); }
+			Vertices vertices() const noexcept { return translateMesh_.vertices(); }
+		};
 
-};
+		class BoxEdges
+		{
+		private:
+			using Impl = MirrorMesh<MirrorMesh<BoxEdge>>;
+			Impl mirrorMesh_;
 
+		public:
+			BoxEdges(
+				const gml::dvec3 &size, double radius,
+				int slices, int segments);
 
-class BoxEdges
-{
-private:
+			using Triangles = typename Impl::Triangles;
 
-	using Impl = MirrorMesh<MirrorMesh<BoxEdge>>;
-	Impl mirrorMesh_;
+			Triangles triangles() const noexcept { return mirrorMesh_.triangles(); }
 
-public:
+			using Vertices = typename Impl::Vertices;
 
-	BoxEdges(
-		const gml::dvec3& size, double radius,
-		int slices, int segments
-	);
+			Vertices vertices() const noexcept { return mirrorMesh_.vertices(); }
+		};
 
-	using Triangles = typename Impl::Triangles;
+		class BoxCorner
+		{
+		private:
+			using Impl = TranslateMesh<SphericalTriangleMesh>;
+			Impl translateMesh_;
 
-	Triangles triangles() const noexcept { return mirrorMesh_.triangles(); }
+		public:
+			BoxCorner(const gml::dvec3 &position, double radius, int slices);
 
-	using Vertices = typename Impl::Vertices;
+			using Triangles = typename Impl::Triangles;
 
-	Vertices vertices() const noexcept { return mirrorMesh_.vertices(); }
+			Triangles triangles() const noexcept { return translateMesh_.triangles(); }
 
-};
+			using Vertices = typename Impl::Vertices;
 
+			Vertices vertices() const noexcept { return translateMesh_.vertices(); }
+		};
 
-class BoxCorner
-{
-private:
+		class BoxCorners
+		{
+		private:
+			using Impl = MirrorMesh<MirrorMesh<MirrorMesh<BoxCorner>>>;
+			Impl mirrorMesh_;
 
-	using Impl = TranslateMesh<SphericalTriangleMesh>;
-	Impl translateMesh_;
+		public:
+			BoxCorners(const gml::dvec3 &size, double radius, int slices);
 
-public:
+			using Triangles = typename Impl::Triangles;
 
-	BoxCorner(const gml::dvec3& position, double radius, int slices);
+			Triangles triangles() const noexcept { return mirrorMesh_.triangles(); }
 
-	using Triangles = typename Impl::Triangles;
+			using Vertices = typename Impl::Vertices;
 
-	Triangles triangles() const noexcept { return translateMesh_.triangles(); }
+			Vertices vertices() const noexcept { return mirrorMesh_.vertices(); }
+		};
 
-	using Vertices = typename Impl::Vertices;
+	} // namespace detail
 
-	Vertices vertices() const noexcept { return translateMesh_.vertices(); }
+	/// Rectangular box with rounded edges centered at origin aligned along the x, y
+	/// and z axis.
+	/// @image html RoundedBoxMesh.svg
+	class RoundedBoxMesh
+	{
+	private:
+		using Impl = MergeMesh<
+			AxisSwapMesh<detail::BoxFaces>,
+			UvFlipMesh<AxisSwapMesh<detail::BoxFaces>>,
+			detail::BoxFaces,
+			AxisSwapMesh<detail::BoxEdges>,
+			AxisSwapMesh<detail::BoxEdges>,
+			detail::BoxEdges,
+			detail::BoxCorners>;
+		Impl mergeMesh_;
 
-};
+	public:
+		/// @param radius Radius of the rounded edges.
+		/// @param size Half of the side length in x (0), y (1) and z (2) direction.
+		/// @param slices Number subdivions around in the rounded edges.
+		/// @param segments Number of subdivisons in x (0), y (1) and z (2)
+		/// direction for the flat faces.
+		RoundedBoxMesh(
+			double radius = 0.25,
+			const gml::dvec3 &size = {0.75, 0.75, 0.75},
+			int slices = 4,
+			const gml::ivec3 &segments = {8, 8, 8});
 
+		using Triangles = typename Impl::Triangles;
 
-class BoxCorners
-{
-private:
+		Triangles triangles() const noexcept { return mergeMesh_.triangles(); }
 
-	using Impl = MirrorMesh<MirrorMesh<MirrorMesh<BoxCorner>>>;
-	Impl mirrorMesh_;
+		using Vertices = typename Impl::Vertices;
 
-public:
-	BoxCorners(const gml::dvec3& size, double radius, int slices);
+		Vertices vertices() const noexcept { return mergeMesh_.vertices(); }
+	};
 
-	using Triangles = typename Impl::Triangles;
-
-	Triangles triangles() const noexcept { return mirrorMesh_.triangles(); }
-
-	using Vertices = typename Impl::Vertices;
-
-	Vertices vertices() const noexcept { return mirrorMesh_.vertices(); }
-};
-
-
-
-}
-
-/// Rectangular box with rounded edges centered at origin aligned along the x, y
-/// and z axis.
-/// @image html RoundedBoxMesh.svg
-class RoundedBoxMesh
-{
-private:
-
-	using Impl = MergeMesh<
-		AxisSwapMesh<detail::BoxFaces>,
-		UvFlipMesh<AxisSwapMesh<detail::BoxFaces>>,
-		detail::BoxFaces,
-		AxisSwapMesh<detail::BoxEdges>,
-		AxisSwapMesh<detail::BoxEdges>,
-		detail::BoxEdges,
-		detail::BoxCorners
-	>;
-	Impl mergeMesh_;
-
-public:
-
-	/// @param radius Radius of the rounded edges.
-	/// @param size Half of the side length in x (0), y (1) and z (2) direction.
-	/// @param slices Number subdivions around in the rounded edges.
-	/// @param segments Number of subdivisons in x (0), y (1) and z (2)
-	/// direction for the flat faces.
-	RoundedBoxMesh(
-		double radius = 0.25,
-		const gml::dvec3& size = {0.75, 0.75, 0.75},
-		int slices = 4,
-		const gml::ivec3& segments = {8, 8, 8}
-	);
-
-	using Triangles = typename Impl::Triangles;
-
-	Triangles triangles() const noexcept { return mergeMesh_.triangles(); }
-
-	using Vertices = typename Impl::Vertices;
-
-	Vertices vertices() const noexcept { return mergeMesh_.vertices(); }
-
-};
-
-
-}
+} // namespace shape_generator
 
 #endif

@@ -4,22 +4,16 @@
 // License as published by the Free Software Foundation; either
 // version 2.1 of the License, or (at your option) any later version.
 
-
 #include "generator/TorusKnotMesh.hpp"
 
-
-using namespace generator;
-
+using namespace shape_generator;
 
 TorusKnotMesh::TorusKnotMesh(
 	int p,
 	int q,
 	int slices,
-	int segments
-) :
-	extrudeMesh_{
-		{0.25, slices, 0.0, gml::radians(360.0)},
-		{p, q, segments}
-	}
-{ }
-
+	int segments) : extrudeMesh_{
+						{0.25, slices, 0.0, gml::radians(360.0)},
+						{p, q, segments}}
+{
+}

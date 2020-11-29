@@ -9,38 +9,36 @@
 
 #include "math.hpp"
 
+namespace shape_generator
+{
 
-namespace generator {
+	/// A point on a path.
+	/// Position and assosiated coordinate system.
+	class ShapeVertex
+	{
+	public:
+		gml::dvec2 position;
 
+		/// Unit length vector parallel to the shape at this point.
+		/// Also the y-axis of the shape's local coordinate system.
+		gml::dvec2 tangent;
 
-/// A point on a path.
-/// Position and assosiated coordinate system.
-class ShapeVertex {
-public:
+		double texCoord;
 
-	gml::dvec2 position;
+		ShapeVertex() : position{},
+						tangent{},
+						texCoord{}
+		{
+		}
 
-	/// Unit length vector parallel to the shape at this point.
-	/// Also the y-axis of the shape's local coordinate system.
-	gml::dvec2 tangent;
+		/// Returns the tangent rotated 90 dec clockwise.
+		/// Also the x-axis of the shape's local coordinate system.
+		gml::dvec2 normal() const noexcept
+		{
+			return -gml::cross(tangent);
+		}
+	};
 
-	double texCoord;
-
-	ShapeVertex() :
-		position{},
-		tangent{},
-		texCoord{}
-	{ }
-
-	/// Returns the tangent rotated 90 dec clockwise.
-	/// Also the x-axis of the shape's local coordinate system.
-	gml::dvec2 normal() const noexcept {
-		return -gml::cross(tangent);
-	}
-
-};
-
-
-}
+} // namespace shape_generator
 
 #endif

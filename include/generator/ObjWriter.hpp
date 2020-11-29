@@ -12,64 +12,63 @@
 #include "MeshVertex.hpp"
 #include "Triangle.hpp"
 
+namespace shape_generator
+{
 
-namespace generator {
+	/// A class for generating obj files for preview and debug purposes.
+	class ObjWriter
+	{
+	public:
+		ObjWriter();
 
+		template <typename Mesh>
+		void writeMesh(const Mesh &mesh)
+		{
+			int newBase = base_;
 
-/// A class for generating obj files for preview and debug purposes.
-class ObjWriter {
-public:
+			for (const MeshVertex &vertex : mesh.vertices())
+			{
+				++newBase;
 
-	ObjWriter();
+				ss_
+					<< "v "
+					<< vertex.position[0] << " "
+					<< vertex.position[1] << " "
+					<< vertex.position[2] << "\n";
 
-	template <typename Mesh>
-	void writeMesh(const Mesh& mesh) {
-		int newBase = base_;
+				ss_
+					<< "vn "
+					<< vertex.normal[0] << " "
+					<< vertex.normal[1] << " "
+					<< vertex.normal[2] << "\n";
 
-		for (const MeshVertex& vertex : mesh.vertices()) {
-			++newBase;
+				ss_
+					<< "vt "
+					<< vertex.texCoord[0] << " "
+					<< vertex.texCoord[1] << "\n";
+			}
 
-			ss_
-			<< "v "
-			<< vertex.position[0] << " "
-			<< vertex.position[1] << " "
-			<< vertex.position[2] << "\n";
+			for (const Triangle &triangle : mesh.triangles())
+			{
+				auto t = triangle.vertices + base_;
+				ss_
+					<< "f "
+					<< t[0] << "/" << t[0] << "/" << t[0] << " "
+					<< t[1] << "/" << t[1] << "/" << t[1] << " "
+					<< t[2] << "/" << t[2] << "/" << t[2] << "\n";
+			}
 
-			ss_
-			<< "vn "
-			<< vertex.normal[0] << " "
-			<< vertex.normal[1] << " "
-			<< vertex.normal[2] << "\n";
-
-			ss_
-			<< "vt "
-			<< vertex.texCoord[0] << " "
-			<< vertex.texCoord[1] << "\n";
+			base_ = newBase;
 		}
 
-		for (const Triangle& triangle : mesh.triangles()) {
-			auto t = triangle.vertices + base_;
-			ss_
-			<< "f "
-			<< t[0] << "/" << t[0] << "/" << t[0] << " "
-			<< t[1] << "/" << t[1] << "/" << t[1] << " "
-			<< t[2] << "/" << t[2] << "/" << t[2] << "\n";
-		}
+		std::string str() { return ss_.str(); }
 
-		base_ = newBase;
-	}
+	private:
+		int base_;
 
-	std::string str() { return ss_.str(); }
+		std::stringstream ss_;
+	};
 
-private:
-
-	int base_;
-
-	std::stringstream ss_;
-
-};
-
-}
-
+} // namespace shape_generator
 
 #endif

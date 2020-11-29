@@ -9,30 +9,27 @@
 
 #include "math.hpp"
 
-namespace generator {
+namespace shape_generator
+{
 
+	class MeshVertex
+	{
+	public:
+		gml::dvec3 position;
 
-class MeshVertex {
-public:
+		/// Unit vector perpendicular to the surface.
+		gml::dvec3 normal;
 
-	gml::dvec3 position;
+		/// UV texture coordinates
+		gml::dvec2 texCoord;
 
-	/// Unit vector perpendicular to the surface.
-	gml::dvec3 normal;
+		MeshVertex() noexcept : position{},
+								normal{},
+								texCoord{}
+		{
+		}
+	};
 
-	/// UV texture coordinates
-	gml::dvec2 texCoord;
-
-	MeshVertex() noexcept :
-		position{},
-		normal{},
-		texCoord{}
-	{ }
-
-};
-
-
-
-}
+} // namespace shape_generator
 
 #endif

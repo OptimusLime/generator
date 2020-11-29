@@ -11,49 +11,46 @@
 #include "MeshVertex.hpp"
 #include "Triangle.hpp"
 
+namespace shape_generator
+{
 
-namespace generator {
-
-
-/// Empty Mesh with zero vertices and triangles.
-class EmptyMesh {
-public:
-
-	class Triangles {
+	/// Empty Mesh with zero vertices and triangles.
+	class EmptyMesh
+	{
 	public:
-		Triangle generate() const;
-		bool done() const noexcept;
-		void next();
-	private:
+		class Triangles
+		{
+		public:
+			Triangle generate() const;
+			bool done() const noexcept;
+			void next();
 
-		Triangles();
+		private:
+			Triangles();
 
-	friend class EmptyMesh;
+			friend class EmptyMesh;
+		};
+
+		class Vertices
+		{
+		public:
+			MeshVertex generate() const;
+			bool done() const noexcept;
+			void next();
+
+		private:
+			Vertices();
+
+			friend class EmptyMesh;
+		};
+
+		EmptyMesh();
+
+		Triangles triangles() const noexcept;
+
+		Vertices vertices() const noexcept;
 	};
 
-	class Vertices {
-	public:
-
-		MeshVertex generate() const;
-		bool done() const noexcept;
-		void next();
-
-	private:
-
-		Vertices();
-
-	friend class EmptyMesh;
-	};
-
-	EmptyMesh();
-
-	Triangles triangles() const noexcept;
-
-	Vertices vertices() const noexcept;
-
-};
-
-
-}
+} // namespace shape_generator
 
 #endif

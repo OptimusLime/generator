@@ -12,86 +12,76 @@
 #include "MeshVertex.hpp"
 #include "Triangle.hpp"
 
-
-namespace generator {
-
-
-/// A triangular region on a surface of a sphere.
-/// @image html SphericalTriangleMesh.svg
-class SphericalTriangleMesh
+namespace shape_generator
 {
-public:
 
-	class Triangles {
+	/// A triangular region on a surface of a sphere.
+	/// @image html SphericalTriangleMesh.svg
+	class SphericalTriangleMesh
+	{
 	public:
+		class Triangles
+		{
+		public:
+			bool done() const noexcept;
 
-		bool done() const noexcept;
+			Triangle generate() const;
 
-		Triangle generate() const;
+			void next();
 
-		void next();
+		private:
+			const SphericalTriangleMesh *mesh_;
+			int row_;
+			int col_;
+			int i_;
+
+			Triangles(const SphericalTriangleMesh &mesh);
+
+			friend class SphericalTriangleMesh;
+		};
+
+		class Vertices
+		{
+		public:
+			bool done() const noexcept;
+
+			MeshVertex generate() const;
+
+			void next();
+
+		private:
+			const SphericalTriangleMesh *mesh_;
+			int row_;
+			int col_;
+
+			Vertices(const SphericalTriangleMesh &mesh);
+
+			friend class SphericalTriangleMesh;
+		};
+
+		/// @param radius Radius of the containing sphere.
+		/// @param segments Number of subdivisions along each edge.
+		SphericalTriangleMesh(
+			double radius = 1.0,
+			int segments = 4);
+
+		/// @param segments Number of subdivisions along each edge.
+		SphericalTriangleMesh(
+			const gml::dvec3 &v0, const gml::dvec3 &v1, const gml::dvec3 &v2,
+			int segments = 4);
+
+		Triangles triangles() const noexcept;
+
+		Vertices vertices() const noexcept;
 
 	private:
+		gml::dvec3 v0_, v1_, v2_;
 
-		const SphericalTriangleMesh* mesh_;
-		int row_;
-		int col_;
-		int i_;
+		gml::dvec3 normal_;
 
-		Triangles(const SphericalTriangleMesh& mesh);
-
-	friend class SphericalTriangleMesh;
+		int segments_;
 	};
 
-	class Vertices {
-	public:
-
-		bool done() const noexcept;
-
-		MeshVertex generate() const;
-
-		void next();
-
-	private:
-
-		const SphericalTriangleMesh* mesh_;
-		int row_;
-		int col_;
-
-		Vertices(const SphericalTriangleMesh& mesh);
-
-	friend class SphericalTriangleMesh;
-	};
-
-	/// @param radius Radius of the containing sphere.
-	/// @param segments Number of subdivisions along each edge.
-	SphericalTriangleMesh(
-		double radius = 1.0,
-		int segments = 4
-	);
-
-	/// @param segments Number of subdivisions along each edge.
-	SphericalTriangleMesh(
-		const gml::dvec3& v0, const gml::dvec3& v1, const gml::dvec3& v2,
-		int segments = 4
-	);
-
-	Triangles triangles() const noexcept;
-
-	Vertices vertices() const noexcept;
-
-private:
-
-	gml::dvec3 v0_, v1_, v2_;
-
-	gml::dvec3 normal_;
-
-	int segments_;
-
-};
-
-
-}
-
+} // namespace shape_generator
 
 #endif

@@ -4,11 +4,9 @@
 // License as published by the Free Software Foundation; either
 // version 2.1 of the License, or (at your option) any later version.
 
-
 #include "generator/SpringMesh.hpp"
 
-using namespace generator;
-
+using namespace shape_generator;
 
 SpringMesh::SpringMesh(
 	double minor,
@@ -19,12 +17,8 @@ SpringMesh::SpringMesh(
 	double minorStart,
 	double minorSweep,
 	double majorStart,
-	double majorSweep
-) :
-	extrudeMesh_{
-		{minor, slices, minorStart, minorSweep},
-		{major, size, segments, majorStart, majorSweep}
-	}
-{ }
-
-
+	double majorSweep) : extrudeMesh_{
+							 {minor, slices, minorStart, minorSweep},
+							 {major, size, segments, majorStart, majorSweep}}
+{
+}

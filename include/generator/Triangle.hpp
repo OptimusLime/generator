@@ -9,26 +9,24 @@
 
 #include "math.hpp"
 
-namespace generator {
+namespace shape_generator
+{
 
+	class Triangle
+	{
+	public:
+		/// Zero based indices of the triangle vertices in counterclockwise order.
+		gml::ivec3 vertices;
 
+		Triangle() noexcept : vertices{}
+		{
+		}
 
-class Triangle {
-public:
+		explicit Triangle(const gml::ivec3 &vertices) noexcept : vertices{vertices}
+		{
+		}
+	};
 
-	/// Zero based indices of the triangle vertices in counterclockwise order.
-	gml::ivec3 vertices;
-
-	Triangle() noexcept :
-		vertices{}
-	{ }
-
-	explicit Triangle(const gml::ivec3& vertices) noexcept :
-		vertices{vertices}
-	{ }
-
-};
-
-}
+} // namespace shape_generator
 
 #endif

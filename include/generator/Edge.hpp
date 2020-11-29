@@ -9,23 +9,23 @@
 
 #include "math.hpp"
 
-namespace generator {
+namespace shape_generator
+{
 
-class Edge {
-public:
+	class Edge
+	{
+	public:
+		gml::ivec2 vertices;
 
-	gml::ivec2 vertices;
+		Edge() noexcept : vertices{}
+		{
+		}
 
-	Edge() noexcept :
-		vertices{}
-	{ }
+		explicit Edge(const gml::ivec2 &vertices) noexcept : vertices{vertices}
+		{
+		}
+	};
 
-	explicit Edge(const gml::ivec2& vertices) noexcept :
-		vertices{vertices}
-	{ }
-
-};
-
-}
+} // namespace shape_generator
 
 #endif

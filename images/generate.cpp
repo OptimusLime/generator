@@ -9,11 +9,10 @@
 
 #include "generator/generator.hpp"
 
-using namespace generator;
+using namespace shape_generator;
 
-
-
-static void generateAxis(SvgWriter& svg, Axis axis) {
+static void generateAxis(SvgWriter &svg, Axis axis)
+{
 	gml::dvec3 color{};
 	color[static_cast<unsigned>(axis)] = 1.0;
 
@@ -24,7 +23,8 @@ static void generateAxis(SvgWriter& svg, Axis axis) {
 	auto xx = line.vertices();
 	auto prev = xx.generate().position;
 	xx.next();
-	while (!xx.done()) {
+	while (!xx.done())
+	{
 		auto current = xx.generate().position;
 		svg.writeLine(prev, current, color);
 		prev = current;
@@ -33,7 +33,8 @@ static void generateAxis(SvgWriter& svg, Axis axis) {
 }
 
 template <typename Shape>
-void generateShape(const Shape& shape, const std::string& filename) {
+void generateShape(const Shape &shape, const std::string &filename)
+{
 	SvgWriter svg{400, 400};
 
 	svg.ortho(-1.5, 1.5, -1.5, 1.5);
@@ -43,13 +44,13 @@ void generateShape(const Shape& shape, const std::string& filename) {
 
 	svg.writeShape(shape, true, true);
 
-	std::ofstream file(filename+".svg");
+	std::ofstream file(filename + ".svg");
 	file << svg.str();
 }
-
 
 template <typename Path>
-void generatePath(const Path& path, const std::string& filename) {
+void generatePath(const Path &path, const std::string &filename)
+{
 	SvgWriter svg{800, 400};
 
 	svg.perspective(1.0, 1.0, 0.1, 10.0);
@@ -58,22 +59,19 @@ void generatePath(const Path& path, const std::string& filename) {
 	svg.modelView(
 		gml::translate(gml::dvec3{-0.0, 0.0, -4.0}) *
 		gml::rotate(gml::dvec3{gml::radians(45.0), 0.0, 0.0}) *
-		gml::rotate(gml::dvec3{0.0, gml::radians(-45.0), 0.0})
-	);
+		gml::rotate(gml::dvec3{0.0, gml::radians(-45.0), 0.0}));
 
 	generateAxis(svg, Axis::X);
 	generateAxis(svg, Axis::Y);
 	generateAxis(svg, Axis::Z);
 
 	svg.writePath(path, true, true);
-
 
 	svg.viewport(400, 0, 400, 400);
 	svg.modelView(
 		gml::translate(gml::dvec3{0.0, 0.0, -4.0}) *
 		gml::rotate(gml::dvec3{gml::radians(45.0), 0.0, 0.0}) *
-		gml::rotate(gml::dvec3{0.0, gml::radians(-135.0), 0.0})
-	);
+		gml::rotate(gml::dvec3{0.0, gml::radians(-135.0), 0.0}));
 
 	generateAxis(svg, Axis::X);
 	generateAxis(svg, Axis::Y);
@@ -81,13 +79,13 @@ void generatePath(const Path& path, const std::string& filename) {
 
 	svg.writePath(path, true, true);
 
-	std::ofstream file(filename+".svg");
+	std::ofstream file(filename + ".svg");
 	file << svg.str();
 }
-
 
 template <typename Mesh>
-void generateMesh(const Mesh& mesh, const std::string& filename) {
+void generateMesh(const Mesh &mesh, const std::string &filename)
+{
 
 	SvgWriter svg{800, 400};
 
@@ -97,8 +95,7 @@ void generateMesh(const Mesh& mesh, const std::string& filename) {
 	svg.modelView(
 		gml::translate(gml::dvec3{-0.0, 0.0, -4.0}) *
 		gml::rotate(gml::dvec3{gml::radians(45.0), 0.0, 0.0}) *
-		gml::rotate(gml::dvec3{0.0, gml::radians(-45.0), 0.0})
-	);
+		gml::rotate(gml::dvec3{0.0, gml::radians(-45.0), 0.0}));
 
 	generateAxis(svg, Axis::X);
 	generateAxis(svg, Axis::Y);
@@ -110,8 +107,7 @@ void generateMesh(const Mesh& mesh, const std::string& filename) {
 	svg.modelView(
 		gml::translate(gml::dvec3{0.0, 0.0, -4.0}) *
 		gml::rotate(gml::dvec3{gml::radians(45.0), 0.0, 0.0}) *
-		gml::rotate(gml::dvec3{0.0, gml::radians(-135.0), 0.0})
-	);
+		gml::rotate(gml::dvec3{0.0, gml::radians(-135.0), 0.0}));
 
 	generateAxis(svg, Axis::X);
 	generateAxis(svg, Axis::Y);
@@ -119,18 +115,17 @@ void generateMesh(const Mesh& mesh, const std::string& filename) {
 
 	svg.writeMesh(mesh, true, true);
 
-	std::ofstream file(filename+".svg");
+	std::ofstream file(filename + ".svg");
 	file << svg.str();
 }
 
-
-int main() {
+int main()
+{
 
 	// Shapes
 	generateShape(
 		BezierShape<4>{{{-1.0, -1.0}, {-0.5, 1.0}, {0.5, -1.0}, {1.0, 1.0}}},
-		"BezierShape"
-	);
+		"BezierShape");
 	generateShape(CircleShape{}, "CircleShape");
 	generateShape(EmptyShape{}, "EmptyShape");
 	generateShape(LineShape{}, "LineShape");
@@ -146,11 +141,10 @@ int main() {
 
 	// Meshes
 	const gml::dvec3 ctrlPoints[4][4] = {
-		{{-1.00,-1.00, 2.66}, {-0.33,-1.00, 0.66}, {0.33,-1.00,-0.66}, {1.0,-1.00, 1.33}},
-		{{-1.00,-0.33, 0.66}, {-0.33,-0.33, 2.00}, {0.33,-0.33, 0.00}, {1.0,-0.33,-0.66}},
+		{{-1.00, -1.00, 2.66}, {-0.33, -1.00, 0.66}, {0.33, -1.00, -0.66}, {1.0, -1.00, 1.33}},
+		{{-1.00, -0.33, 0.66}, {-0.33, -0.33, 2.00}, {0.33, -0.33, 0.00}, {1.0, -0.33, -0.66}},
 		{{-1.00, 0.33, 2.66}, {-0.33, 0.33, 0.00}, {0.33, 0.33, 2.00}, {1.0, 0.33, 2.66}},
-		{{-1.00, 1.00,-1.33}, {-0.33, 1.00,-1.33}, {0.33, 1.00, 0.00}, {1.0, 1.00,-0.66}}
-	};
+		{{-1.00, 1.00, -1.33}, {-0.33, 1.00, -1.33}, {0.33, 1.00, 0.00}, {1.0, 1.00, -0.66}}};
 	generateMesh(BezierMesh<4, 4>{ctrlPoints, {8, 8}}, "BezierMesh");
 	generateMesh(BoxMesh{}, "BoxMesh");
 	generateMesh(CappedCylinderMesh{}, "CappedCylinderMesh");
@@ -184,9 +178,7 @@ int main() {
 	svg.modelView(
 		gml::translate(gml::dvec3{-0.0, 0.0, -4.0}) *
 		gml::rotate(gml::dvec3{gml::radians(45.0), 0.0, 0.0}) *
-		gml::rotate(gml::dvec3{0.0, gml::radians(-45.0), 0.0})
-	);
-
+		gml::rotate(gml::dvec3{0.0, gml::radians(-45.0), 0.0}));
 
 	svg.viewport(0, 200, 200, 200);
 	svg.writeMesh(SphereMesh{});
@@ -217,8 +209,6 @@ int main() {
 
 	svg.viewport(800, 0, 200, 200);
 	svg.writeMesh(CappedConeMesh{});
-
-
 
 	std::ofstream file("GroupPicture.svg");
 	file << svg.str();

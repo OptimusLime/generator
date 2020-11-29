@@ -11,50 +11,46 @@
 #include "PathVertex.hpp"
 #include "Edge.hpp"
 
-namespace generator {
+namespace shape_generator
+{
 
-
-/// Empty path with zero vertices and edges.
-class EmptyPath {
-public:
-
-	class Edges {
+	/// Empty path with zero vertices and edges.
+	class EmptyPath
+	{
 	public:
+		class Edges
+		{
+		public:
+			Edge generate() const;
+			bool done() const noexcept;
+			void next();
 
-		Edge generate() const;
-		bool done() const noexcept;
-		void next();
+		private:
+			Edges();
 
-	private:
+			friend class EmptyPath;
+		};
 
-		Edges();
+		class Vertices
+		{
+		public:
+			PathVertex generate() const;
+			bool done() const noexcept;
+			void next();
 
-	friend class EmptyPath;
+		private:
+			Vertices();
+
+			friend class EmptyPath;
+		};
+
+		EmptyPath();
+
+		Edges edges() const noexcept;
+
+		Vertices vertices() const noexcept;
 	};
 
-	class Vertices {
-	public:
-
-		PathVertex generate() const;
-		bool done() const noexcept;
-		void next();
-
-	private:
-
-		Vertices();
-
-	friend class EmptyPath;
-	};
-
-	EmptyPath();
-
-	Edges edges() const noexcept;
-
-	Vertices vertices() const noexcept;
-
-};
-
-
-}
+} // namespace shape_generator
 
 #endif

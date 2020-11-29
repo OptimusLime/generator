@@ -6,8 +6,7 @@
 
 #include "generator/SphereMesh.hpp"
 
-using namespace generator;
-
+using namespace shape_generator;
 
 SphereMesh::SphereMesh(
 	double radius,
@@ -16,15 +15,14 @@ SphereMesh::SphereMesh(
 	double sliceStart,
 	double sliceSweep,
 	double segmentStart,
-	double segmentSweep
-) :
-	axisSwapMesh_{
-		{
-			{radius, segments, segmentStart, segmentSweep},
-			{1.0, 0.0}, slices, sliceStart, sliceSweep
-		},
-		Axis::Y, Axis::Z, Axis::X
-	}
-{ }
-
-
+	double segmentSweep) : axisSwapMesh_{
+							   {{radius, segments, segmentStart, segmentSweep},
+								{1.0, 0.0},
+								slices,
+								sliceStart,
+								sliceSweep},
+							   Axis::Y,
+							   Axis::Z,
+							   Axis::X}
+{
+}
